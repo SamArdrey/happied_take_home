@@ -2,7 +2,7 @@
 
 module Api
   class EventsController < ApplicationController
-    before_action :set_event, only: [:show, :update, :destroy]
+    before_action :set_event, only: [:update, :destroy]
 
     def index
       @events = Event.all
@@ -10,7 +10,8 @@ module Api
     end
 
     def show
-      render json: @event
+      event = Event.includes(events_attendees: :attendee).find(params[:id])
+      render json: event.to_json(include: { events_attendees: { include: :attendee } })
     end
 
     def create
